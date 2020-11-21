@@ -1,0 +1,139 @@
+"A date string with format `Y-m-d`, e.g. `2011-05-23`."
+scalar Date @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Date")
+
+"A datetime string with format `Y-m-d H:i:s`, e.g. `2018-05-23 13:43:32`."
+scalar DateTime
+    @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
+
+"A datetime and timezone string in ISO 8601 format `Y-m-dTH:i:sO`, e.g. `2020-04-20T13:53:12+02:00`."
+scalar DateTimeTz
+    @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTimeTz")
+
+type Query {
+    users: [User!]! @paginate(defaultCount: 10)
+    user(id: ID @eq): User @find
+
+    supermarkets: [Supermarket!]! @paginate(defaultCount: 10)
+    supermarket(id: ID @eq): Supermarket @find
+
+    orders: [Order!]! @paginate(defaultCount: 10)
+    order(id: ID @eq): Order @find
+
+    items: [Item!]! @paginate(defaultCount: 10)
+    item(id: ID @eq): Item @find
+}
+
+type Mutation {
+    createUser(
+        name: String!
+        surname: String!
+        phonenumber: String!
+        email: String!
+        address: String!
+        password: String!
+    ): User @create
+
+    updateUser(
+        id: ID
+        name: String
+        surname: String
+        phonenumber: String
+        address: String
+        email: String
+        password: String
+    ): User @update
+
+    deleteUser(id: ID!): User @delete
+
+    createSupermarket(
+        S_Name: String!
+        _Slocation: String!
+        S_Status: String!
+    ): Supermarket @create
+
+    updateSupermarket(
+        id: ID
+        S_Name: String
+        _Slocation: String
+        S_Status: String
+    ): Supermarket @update
+
+    deleteSupermarket(id: ID!): Supermarket @delete
+
+    createOrder(
+        Discount: Float!
+        Total_Amount: Float!
+        Latitude: Float!
+        Longitude: Float!
+        Pick_up_point: String!
+        user_id: Int!
+    ): Order @create
+
+    updateOrder(
+        id: ID
+        Discount: Float
+        Total_Amount: Float
+        Latitude: Float
+        Longitude: Float
+        Pick_up_point: String
+    ): Order @update
+
+    deleteOrder(id: ID!): Order @delete
+
+    createItem(
+        I_Name: String!
+        I_Weight: String!
+        I_Price: Float!
+        supermarket_id: Int!
+    ): Item @create
+
+    updateItem(id: ID, I_Name: String, I_Weight: String, I_Price: Float): Item
+        @update
+
+    deleteItem(id: ID!): Item @delete
+}
+
+type User {
+    id: ID!
+    name: String!
+    surname: String!
+    phonenumber: String!
+    email: String!
+    address: String!
+    created_at: DateTime!
+    updated_at: DateTime!
+    orders: [Order] @hasMany
+}
+
+type Supermarket {
+    id: ID!
+    S_Name: String!
+    _Slocation: String!
+    S_Status: String!
+    created_at: DateTime!
+    updated_at: DateTime!
+    items: [Item] @hasMany
+}
+
+type Order {
+    id: ID!
+    Discount: Float!
+    Total_Amount: Float!
+    Latitude: Float!
+    Longitude: Float!
+    Pick_up_point: String!
+    created_at: DateTime!
+    updated_at: DateTime!
+    user: User! @belongsTo
+    items: [Item] @hasMany
+}
+
+type Item {
+    id: ID!
+    I_Name: String!
+    I_Weight: String!
+    I_Price: Float!
+    created_at: DateTime!
+    updated_at: DateTime!
+    supermarket: Supermarket! @belongsTo
+}
